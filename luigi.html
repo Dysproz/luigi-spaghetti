@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js – The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<p style="color:green;font-family: verdana; font-size: 120px">Luigi</p>
+					<img src="/luigi_img/luigi.gif"; width=30%; height=30%>
+				</section>
+
+				<section>
+					<section>
+						<img src="/luigi_img/spotify.png"; border:0>
+					</section>
+					<section id="fragments">
+						<img src="/luigi_img/building.png"; width=30%; height=30%>
+						<img src="/luigi_img/building.png"; class="fragment"; width=30%; height=30%>
+						<img src="/luigi_img/building.png"; class="fragment"; width=30%; height=30%>
+					</section>
+					<section>
+						<img src="/luigi_img/city.jpg">
+					</section>
+					<section>
+						<img src="/luigi_img/world.png"; width=60%; height=60%>
+					</section>
+				</section>
+
+				<section>
+					<img src="/luigi_img/luigi.png"; width=70%; height=70%>
+				</section>
+
+				<section data-markdown>
+					<script type="text/template">
+					```bash
+					pip install luigi
+					```
+
+					```bash
+					luigid --background --port=8082 --logdir=logs
+					```
+					</script>
+				</section>
+
+				<section>
+				    <section data-markdown>
+					    <script type="text/template">
+					    ```python
+						    class MyTask(luigi.Task):
+							myvar1 = luigi.Parameter()
+							myvar2 = luigi.Parameter()
+							...
+					    ```
+					    </script>
+					</section>
+
+					<section data-markdown>
+							<script type="text/template">
+							```python
+							    ...
+								def requires(self):
+								return [
+								ReqTask1(param1='a', param2='b'),
+								Re1Task2()
+								]
+								...
+							```
+							</script>
+					</section>
+
+					<section data-markdown>
+							<script type="text/template">
+							```python
+								...
+								def run(self):
+								doSomething()
+								...
+							```
+							</script>
+					</section>
+
+
+					<section data-markdown>
+							<script type="text/template">
+							```python
+								...
+								def output(self):
+								return luigi.LocalTarget(path)
+								...
+							```
+							</script>
+					</section>
+
+					<section>
+						<img src="/luigi_img/luigiTask.png">
+					</section>
+			    </section>
+
+				<section>
+					<img src="/luigi_img/structure.png">
+				</section>
+
+				<section>
+					<section>
+						<img src="/luigi_img/plan.png"; width=70%; height=70%>
+					</section>
+					<section>
+						<img src="/luigi_img/tech_plan.png"; width=100%; height=100%>
+					</section>
+			    </section>
+				<section>
+				<section data-markdown>
+					<script type="text/template">
+						# Prepare plate
+						```python
+							class PreparePlate(luigi.Task):
+								path = luigi.Parameter()
+								def run(self):
+									time.sleep(5)
+									os.makedirs(self.path)
+
+								def output(self):
+									return luigi.LocalTarget(self.path)
+						```
+					</script>
+				</section>
+
+
+				<section data-markdown>
+						<script type="text/template">
+							# Cook pasta
+							```python
+							class CookPasta(luigi.Task):
+								path = luigi.Parameter()
+								def requires(self):
+									return [PreparePlate(path=os.path.dirname(self.path))]
+
+								def run(self):
+									time.sleep(5)
+									with open(self.path, 'w') as pasta:
+										pasta.write('Cooked Pasta')
+
+								def output(self):
+									return luigi.LocalTarget(self.path)
+							```
+						</script>
+				</section>
+
+				<section data-markdown>
+						<script type="text/template">
+							# chop
+							```python
+							class Chop(luigi.Task):
+								path = luigi.Parameter()
+								ingredient = luigi.Parameter()
+
+								def run(self):
+									time.sleep(5)
+									with open(self.path, 'w') as ingredient:
+										ingredient.write(f'Chopped {self.ingredient}')
+
+								def output(self):
+									return luigi.LocalTarget(self.path)
+
+								def requires(self):
+									return [PreparePlate(path=os.path.dirname(self.path))]
+							```
+						</script>
+				</section>
+
+				<section data-markdown>
+						<script type="text/template">
+							# Make stuffing
+							```python
+							class MakeStuffing(luigi.Task):
+								path = luigi.Parameter()
+								id = luigi.Parameter(default='test')
+
+								def requires(self):
+									return [Chop(path=f'results/{self.id}/garlic.txt',
+									             ingredient='garlic'),
+											MakeTomatoSauce(
+												path=f'results/{self.id}/sauce.txt'
+												),
+											Chop(path=f'results/{self.id}/onion.txt',
+											     ingredient='onion'),
+											CookMeat(path=f'results/{self.id}/meat.txt')
+										]
+							```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							```python
+							def run(self):
+								time.sleep(5)
+								with open(self.input()[0].path, 'r') as garlic_file:
+									garlic = garlic_file.read()
+								with open(self.input()[1].path, 'r') as sauce_file:
+									sauce = sauce_file.read()
+								with open(self.input()[2].path, 'r') as onion_file:
+									onion = onion_file.read()
+								with open(self.input()[3].path, 'r') as meat_file:
+									meat = meat_file.read()
+								with open(self.output().path, 'w') as stuffing:
+									stuffing.write(f'{garlic} + {sauce} + {onion}')
+
+							```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							```python
+							def output(self):
+								path = f'results/{self.id}/stuffing.txt'
+								return luigi.LocalTarget(path)
+							```
+						</script>
+				</section>
+
+				<section data-markdown>
+						<script type="text/template">
+							# Make Spaghetti
+							```python
+							class MakeSpaghetti(luigi.Task):
+								id = luigi.Parameter(default='test')
+
+								def requires(self):
+									return [
+										CookPasta(path=f'results/{self.id}/pasta.txt'),
+										MakeStuffing(
+											path=f'results/{self.id}/stuffing.txt',
+											id=self.id
+										)
+									]
+							```
+						</script>
+				</section>
+
+				<section data-markdown>
+						<script type="text/template">
+							```python
+							def run(self):
+								time.sleep(5)
+								with open(self.input()[0].path, 'r') as pasta_file:
+									pasta = pasta_file.read()
+								with open(self.input()[1].path, 'r') as stuffing_file:
+									stuffing = stuffing_file.read()
+								with open(self.output().path, 'w') as spaghetti:
+									spaghetti.write(f'{pasta} + {stuffing}')
+
+							def output(self):
+								path = f'results/{self.id}/spaghetti.txt'
+								return luigi.LocalTarget(path)
+							```
+						</script>
+				</section>
+				</section>
+
+				<section>
+					<section data-markdown>
+						<script type="text/template">
+						### Run it!
+						```bash
+						python3 luigi-spaghetti.py MakeSpaghetti --id yummy
+						```
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						```bash
+						===== Luigi Execution Summary =====
+						Scheduled 8 tasks of which:
+						* 8 ran successfully:
+						- 2 Chop(path=results/yummy/garlic.txt, ingredient=garlic)
+							and Chop(path=results/yummy/onion.txt, ingredient=onion)
+						- 1 CookMeat(path=results/yummy/meat.txt)
+						- 1 CookPasta(path=results/yummy/pasta.txt)
+						- 1 MakeSpaghetti(id=yummy)
+						- 1 MakeStuffing(path=results/yummy/stuffing.txt, id=yummy)
+						...
+						This progress looks :) because there
+						were no failed tasks or missing dependencies
+						===== Luigi Execution Summary =====
+
+						```
+						</script>
+					</section>
+
+					<section data-markdown>
+						<script type="text/template">
+						```bash
+						File: garlic.txt
+						|Chopped garlic
+						File: meat.txt
+						|Cooked Meat
+						File: onion.txt
+						|Chopped onion
+						File: pasta.txt
+						|Cooked Pasta
+						File: sauce.txt
+						|Tomato Sauce
+						File: spaghetti.txt
+						|Cooked Pasta + Chopped garlic + Tomato Sauce + Chopped onion
+						File: stuffing.txt
+						|Chopped garlic + Tomato Sauce + Chopped onion
+						```
+						</script>
+					</section>
+				</section>
+
+				<section>
+					Dashboard
+					<img src="/luigi_img/luigi_dashboard.png">
+				</section>
+
+				<section>
+					<p>Thanks!</p>
+					<img src="/luigi_img/pizza_time.gif">
+					<a href="https://github.com/Dysproz/luigi-spaghetti">
+						github.com/Dysproz/luigi-spaghetti
+					</a>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+				pdfSeparateFragments: false,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true },
+					{ src: 'plugin/search/search.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
