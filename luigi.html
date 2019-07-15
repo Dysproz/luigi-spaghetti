@@ -82,7 +82,7 @@
 				    <section data-markdown>
 					    <script type="text/template">
 					    ```python
-						    class MyTask(luigi.Task):
+						class MyTask(luigi.Task):
 							myvar1 = luigi.Parameter()
 							myvar2 = luigi.Parameter()
 							...
@@ -95,10 +95,10 @@
 							```python
 							    ...
 								def requires(self):
-								return [
-								ReqTask1(param1='a', param2='b'),
-								Re1Task2()
-								]
+								    return [
+								        ReqTask1(param1='a', param2='b'),
+								        Re1Task2()
+								    ]
 								...
 							```
 							</script>
@@ -107,10 +107,10 @@
 					<section data-markdown>
 							<script type="text/template">
 							```python
-								...
-								def run(self):
+							...
+							def run(self):
 								doSomething()
-								...
+							...
 							```
 							</script>
 					</section>
@@ -119,10 +119,10 @@
 					<section data-markdown>
 							<script type="text/template">
 							```python
-								...
-								def output(self):
-								return luigi.LocalTarget(path)
-								...
+							...
+							def output(self):
+							    return luigi.LocalTarget(path)
+							...
 							```
 							</script>
 					</section>
