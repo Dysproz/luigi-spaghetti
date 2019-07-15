@@ -98,12 +98,11 @@ class MakeStuffing(luigi.Task):
             onion = onion_file.read()
         with open(self.input()[3].path, 'r') as meat_file:
             meat = meat_file.read()
-        with open(self.output().path, 'w') as stuffing:
+        with open(self.path, 'w') as stuffing:
             stuffing.write(f'{garlic} + {sauce} + {onion} + {meat}')
 
     def output(self):
-        path = f'results/{self.id}/stuffing.txt'
-        return luigi.LocalTarget(path)
+        return luigi.LocalTarget(self.path)
 
 
 class MakeSpaghetti(luigi.Task):
